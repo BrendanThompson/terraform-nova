@@ -1,0 +1,30 @@
+{
+    "identifier": "com.brendanthompson.terraform-nova",
+    "name": "Terraform Nova",
+    "organization": "Brendan Thompson",
+    "description": "Terraform language support and intelligence.",
+    "version": "0.1.0",
+    "categories": ["languages"],
+    "keywords": ["terraform", "hashicorp", "hcl"],
+    "main": "main.js",
+    "activationEvents": ["onLanguage:Terraform", "onWorkspaceContains:*.tf"],
+    "entitlements": {
+        "process": true,
+        "filesystem": "readwrite"
+    },
+    "config": [
+        {
+          "key": "terraform-nova.enable-language-server",
+          "title": "Enable Language Server",
+          "description": "Use the `terraform-ls` language server for enhanced functionality. The `terraform-ls` command should be installed in your search path, or you can specify the full path below.",
+          "type": "boolean",
+          "default": true
+        },
+        {
+            "key": "terraform-nova.language-server-path",
+            "title": "Language Server Path",
+            "type": "path",
+            "default": "/opt/homebrew/bin/terraform-ls"
+        }
+    ]
+}
