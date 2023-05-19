@@ -1,6 +1,6 @@
 {
     "identifier": "com.brendanthompson.terraform-nova",
-    "name": "Terraform Nova",
+    "name": "Terraform",
     "organization": "Brendan Thompson",
     "description": "Terraform language support and intelligence.",
     "repository": "https://github.com/BrendanThompson/terraform-nova",
