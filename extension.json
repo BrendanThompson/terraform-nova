@@ -3,6 +3,7 @@
     "name": "Terraform Nova",
     "organization": "Brendan Thompson",
     "description": "Terraform language support and intelligence.",
+    "repository": "https://github.com/BrendanThompson/terraform-nova",
     "version": "0.1.0",
     "categories": ["languages"],
     "keywords": ["terraform", "hashicorp", "hcl"],
