@@ -20,12 +20,53 @@ exports.deactivate = function() {
 }
 
 class TerraformTaskProvider {
+    constructor() {
+        this.path = nova.config.get("terraform-nova.terraform-path");
+
+        nova.config.onDidChange("terraform-nova.terraform-path", (path) => {
+            if (!nova.fs.access(path, nova.fs.constants.F_OK)) {
+                notify(
+                    "Invalid Terraform binary path, please check the path you've inputted.",
+                    ["Get Terraform", "Ignore"],
+                    (reply) => {
+                        switch (reply.actionIdx) {
+                            case 0:
+                                nova.openURL("https://developer.hashicorp.com/terraform/downloads")
+                                break
+                            case 1:
+                                break
+                        }
+                    }
+                )
+            } else {
+                this.path = path
+            }
+        })
+    }
+
     provideTasks() {
+        if (!this.path) {
+            notify(
+                "Cannot find Terraform binary, please ensure it is installed.",
+                ["Get Help", "Ignore"],
+                (reply) => {
+                    switch (reply.actionIdx) {
+                        case 0:
+                            nova.openURL("https://developer.hashicorp.com/terraform/downloads")
+                            break
+                        case 1:
+                            break
+                    }
+                }
+            )
+            return []
+        }
+
         const terraformTask = new Task("Terraform")
 
         terraformTask.setAction(
             Task.Build,
-            new TaskProcessAction("/opt/homebrew/bin/terraform", {
+            new TaskProcessAction(this.path, {
                 args: ["plan"],
                 env: {},
                 cwd: nova.workspace.path,
@@ -103,7 +144,6 @@ class TerraformLanguageServer {
 
     start() {
         console.log("Starting client")
-        notify("Starting Terraform language server.")
 
         this.stop();
 
@@ -131,7 +171,15 @@ class TerraformLanguageServer {
 
         client.onDidStop((error) => {
             if (error) {
-                this.showStoppedUnexpectedlyNotification(error);
+                notify(
+                    `Terraform language server quit unexpectedly with error: ${error}`,
+                    ["Restart", "Ignore"],
+                    (reply) => {
+                        if (reply.actionIdx == 0) {
+                            languageServer.start();
+                        }
+                    }
+                )
             }
         }, this);
 
@@ -175,30 +223,16 @@ class TerraformLanguageServer {
             languageServer.start();
         }, 1000);
     }
-
-    showStoppedUnexpectedlyNotification(error) {
-        let request = new NotificationRequest("com.brendanthompson.terraform-nova.terraform-ls.quit-unexpectedly");
-        request.title = "Terraform LS Quit Unexpectedly";
-        request.body = `The language server encountered an error: ${error}`;
-        request.actions = ["Restart", "Ignore"];
-
-        let languageServer = this;
-
-        let promise = nova.notifications.add(request);
-        promise.then(reply => {
-            if (reply.actionIdx == 0) {
-                // Restart server
-                languageServer.start();
-            }
-        });
-    }
 }
 
-function notify(message) {
+function notify(body, actions, handler) {
     let request = new NotificationRequest("terraform")
 
     request.title = "Terraform"
-    request.body = message
+    request.body = body
+    if (actions) request.actions = actions
 
-    nova.notifications.add(request)
+    nova.notifications.add(request).then(reply => {
+        if (handler) handler(reply)
+    }, err => console.error(err))
 }
