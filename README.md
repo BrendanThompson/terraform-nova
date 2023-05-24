@@ -8,4 +8,4 @@ In the future syntax highlighting will move to `tree-sitter`.
 * Syntax Highlighting
 * Hover Tooltips
 * Signature Assistance
-* Task Templates
+* Tasks
