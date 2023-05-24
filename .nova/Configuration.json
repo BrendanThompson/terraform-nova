@@ -1,3 +1,5 @@
 {
+  "apexskier.eslint.config.eslintConfigPath" : ".eslintrc",
+  "apexskier.eslint.config.fixOnSave" : "Inherit from Global Settings",
   "editor.default_syntax" : "javascript"
 }

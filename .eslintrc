@@ -1,0 +1,9 @@
+{
+    "plugins": [
+        "nova"
+    ],
+    "env": {
+        "commonjs": true,
+        "nova/nova": true
+    }
+}
