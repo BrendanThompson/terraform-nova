@@ -75,17 +75,19 @@ class TerraformTaskProvider {
 
         terraformTask.setAction(
             Task.Run,
-            new TaskProcessAction("", {
-                args: [],
+            new TaskProcessAction(this.path, {
+                args: ["apply", "-auto-approve"],
                 env: {},
+                cwd: nova.workspace.path,
             })
         )
 
         terraformTask.setAction(
             Task.Clean,
-            new TaskProcessAction("", {
-                args: [],
+            new TaskProcessAction(this.path, {
+                args: ["destroy", "-auto-approve"],
                 env: {},
+                cwd: nova.workspace.path,
             })
         )
 
