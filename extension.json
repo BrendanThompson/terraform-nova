@@ -21,6 +21,12 @@
             "title": "Language Server Path",
             "type": "path",
             "default": "/opt/homebrew/bin/terraform-ls"
+        },
+        {
+            "key": "terraform-nova.terraform-path",
+            "title": "Terraform Path",
+            "type": "path",
+            "default": "/opt/homebrew/bin/terraform"
         }
     ]
 }
