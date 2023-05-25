@@ -1,3 +1,8 @@
+## Version 0.5.1
+
+### 🐞 Fixed
+- **Clips:** Remove quotes from `type` on variable clips
+
 ## Version 0.5.0
 
 ### ✨ New
