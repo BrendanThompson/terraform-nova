@@ -1,0 +1,61 @@
+{
+    "clips": [{
+            "name": "Variables",
+            "children": [{
+                    "name": "Default Variable",
+                    "scope": "editor",
+                    "syntax": "terraform",
+                    "trigger": "variable",
+                    "content": "variable \"${:name}\" {\n\ttype = \"${:type}\"\n\tdescription = \"${:description}\"\n\tdefault = \"${:default}\"\n}"
+                },
+                {
+                    "name": "Validated Variable",
+                    "scope": "editor",
+                    "syntax": "terraform",
+                    "trigger": "variable.validation",
+                    "content": "variable \"${:Name}\" { \n\ttype = \"${:Type}\" \n\tdescription = \"${:Description}\" \n\tdefault = \"${:Default}\" \n\n\n\tvalidation { \n\t\tcondition = \"${:Condition}\" \n\t\terror_message = \"${:Error Message}\" \n\t\t} \n\t}"
+                }
+            ]
+        },
+        {
+            "name": "Backends",
+            "children": [
+                {
+                    "name": "Local Backend",
+                    "scope": "editor",
+                    "syntax": "terraform",
+                    "trigger": "backend.local",
+                    "content": "terraform { \n\t backend \"local\" { \n\t\t path = \"${:Path}\" \n\t } \n }"
+                },
+                {
+                    "name": "Remote Backend",
+                    "scope": "editor",
+                    "syntax": "terraform",
+                    "trigger": "backend.remote",
+                    "content": "terraform { \n\t backend \"remote\" { \n\t\t hostname = \"${:Hostname}\" \n\t\t organization = \"${:Organization}\" \n\n\t workspaces { \n\t\t name = \"${:Workspace Name}\" \n\t\t } \n\t } \n }"
+                },
+                {
+                    "name": "Azure Backend",
+                    "scope": "editor",
+                    "syntax": "terraform",
+                    "trigger": "backend.azure",
+                    "content": "terraform { \n\t  backend \"azurerm\" { \n\t\t resource_group_name  = \"${:Resource Group}\" \n\t\t storage_account_name = \"${:Storage Account}\" \n\t\t container_name       = \"${:Container Name}\" \n\t\t key                  = \"${:Key}\" \n\t } \n }"
+                },
+                {
+                    "name": "GCS Backend (GCP)",
+                    "scope": "editor",
+                    "syntax": "terraform",
+                    "trigger": "backend.gcs",
+                    "content": "terraform { \n\t backend \"gcs\" { \n\t\t bucket  = \"${:Bucket}\" \n\t\t prefix  = \"${:Prefix}\" \n\t } \n }"
+                },
+                {
+                    "name": "S3 Backend (AWS)",
+                    "scope": "editor",
+                    "syntax": "terraform",
+                    "trigger": "backend.s3",
+                    "content": "terraform { \n\t backend \"s3\" { \n\t\t bucket = \"${:Bucket}\" \n\t\t key    = \"${:Key}\" \n\t\t region = \"${:Region}\" \n\t } \n }"
+                }
+            ]
+        }
+    ]
+}
