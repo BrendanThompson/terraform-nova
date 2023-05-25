@@ -169,7 +169,8 @@ class TerraformLanguageServer {
             ],
             initializationOptions: {
                 terraform: {
-                    path: "/opt/homebrew/bin/terraform",
+                    //TODO: Refactor to have a shared source of configuration
+                    path: nova.config.get("terraform-nova.terraform-path"),
 
                 },
                 indexing: {
