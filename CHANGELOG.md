@@ -1,3 +1,17 @@
+## Version 0.4.0
+
+### ✨ New
+- **Tasks:** Add `apply` and `destroy` has tasks for **Install** and **Clean** respectively
+- **Syntax Highlighting:** Support for `tfvars`
+
+### 💎 Improved
+- **Formatting:** Terraform files can now be formatted
+- **Misc:** Validation existence of binaries
+- **Misc:** Implemented notification system
+- **Language Server:** Ignore `.nova` directory
+
+
+
 ## Version 0.3.1
 
 ### 💎 Improved
@@ -7,7 +21,7 @@
 ## Version 0.3.0
 
 ### ✨ New
-- **Tasks**: Added default `plan` task
+- **Tasks:** Added default `plan` task
 
 ### 💎 Improved
 - **Docs:** Updated `README` to be relevant to the extension
