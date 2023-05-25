@@ -56,6 +56,25 @@
                     "content": "terraform { \n\t backend \"s3\" { \n\t\t bucket = \"${:Bucket}\" \n\t\t key    = \"${:Key}\" \n\t\t region = \"${:Region}\" \n\t } \n }"
                 }
             ]
+        },
+        {
+            "name": "General",
+            "children": [
+                {
+                    "name": "Full Provider Requirements",
+                    "scope": "editor",
+                    "syntax": "terraform",
+                    "trigger": "general.full-provider-requirements",
+                    "content": "terraform { \n\t required_providers { \n\t\t ${:Provider} = { \n\t\t\t source  = \"${:Provider Source}\" \n\t\t\t version = \"${:Version Constraint}\" \n\t\t } \n\t } \n }"
+                },
+                {
+                    "name": "Provider Requirement",
+                    "scope": "editor",
+                    "syntax": "terraform",
+                    "trigger": "general.provider-requirement",
+                    "content": "\n\t\t ${:Provider} = { \n\t\t\t source  = \"${:Provider Source}\" \n\t\t\t version = \"${:Version Constraint}\" \n\t\t }"
+                }
+            ]
         }
     ]
 }
