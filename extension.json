@@ -7,7 +7,7 @@
     "bugs": "https://github.com/BrendanThompson/terraform-nova/issues",
     "homepage": "https://brendanthompson.com",
     "version": "0.4.0",
-    "categories": ["languages", "tasks", "formatters"],
+    "categories": ["languages", "tasks", "formatters", "clips"],
     "keywords": ["terraform", "hashicorp", "hcl"],
     "main": "main.js",
     "activationEvents": [
