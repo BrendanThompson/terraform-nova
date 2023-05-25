@@ -10,13 +10,17 @@
     "categories": ["languages", "tasks"],
     "keywords": ["terraform", "hashicorp", "hcl"],
     "main": "main.js",
-    "activationEvents": ["onLanguage:Terraform", "onWorkspaceContains:*.tf"],
+    "activationEvents": [
+        "onLanguage:Terraform",
+        "onLanguage:Terraform Variables",
+        "onWorkspaceContains:*.tf",
+        "onWorkspaceContains:*.tfvars"
+    ],
     "entitlements": {
         "process": true,
         "filesystem": "readwrite"
     },
-    "config": [
-        {
+    "config": [{
             "key": "terraform-nova.language-server-path",
             "title": "Language Server Path",
             "type": "path",
