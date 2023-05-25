@@ -25,6 +25,7 @@ class TerraformTaskProvider {
 
         nova.config.onDidChange("terraform-nova.terraform-path", (path) => {
             if (!nova.fs.access(path, nova.fs.constants.F_OK)) {
+                this.dispose();
                 notify(
                     "Invalid Terraform binary path, please check the path you've inputted.",
                     ["Get Terraform", "Ignore"],
@@ -164,9 +165,19 @@ class TerraformLanguageServer {
         let clientOptions = {
             syntaxes: [
                 "terraform",
-                "Terraform",
-                "tf"
-            ]
+                "terraform-vars"
+            ],
+            initializationOptions: {
+                terraform: {
+                    path: "/opt/homebrew/bin/terraform",
+
+                },
+                indexing: {
+                    ignoreDirectoryNames: [
+                        ".nova"
+                    ]
+                }
+            }
         };
 
         let client = new LanguageClient("terraform-ls", "Terraform Language Server", serverOptions, clientOptions);
