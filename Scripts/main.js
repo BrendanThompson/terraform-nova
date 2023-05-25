@@ -208,8 +208,6 @@ class TerraformLanguageServer {
     }
 
     stop() {
-        notify("Stopping the Terraform language server.")
-
         let langclient = this.languageClient;
         this.languageClient = null;
 
