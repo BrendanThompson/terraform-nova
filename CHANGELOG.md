@@ -1,3 +1,8 @@
+## Version 0.5.0
+
+### ✨ New
+- **Clips**: Variables, Backends and Provider Requirement clips
+
 ## Version 0.4.0
 
 ### ✨ New
