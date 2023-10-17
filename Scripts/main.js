@@ -2,249 +2,246 @@ var languageServer = null;
 var taskProvider = null;
 
 exports.activate = function() {
-    languageServer = new TerraformLanguageServer();
-    taskProvider = new TerraformTaskProvider();
+  languageServer = new TerraformLanguageServer();
+  taskProvider = new TerraformTaskProvider();
 
-
-    nova.assistants.registerTaskAssistant(taskProvider, {
-        "identifier": "terraform-nova",
-        "name": "Terraform Tasks"
-    });
+  nova.assistants.registerTaskAssistant(taskProvider, {
+    "identifier": "terraform-nova",
+    "name": "Terraform Tasks"
+  });
 }
 
 exports.deactivate = function() {
-    if (languageServer) {
-        languageServer.deactivate();
-        languageServer = null;
-    }
+  if (languageServer) {
+    languageServer.deactivate();
+    languageServer = null;
+  }
 }
 
 class TerraformTaskProvider {
-    constructor() {
-        this.path = nova.config.get("terraform-nova.terraform-path");
+  constructor() {
+    this.path = nova.config.get("terraform-nova.terraform-path");
 
-        nova.config.onDidChange("terraform-nova.terraform-path", (path) => {
-            if (!nova.fs.access(path, nova.fs.constants.F_OK)) {
-                this.dispose();
-                notify(
-                    "Invalid Terraform binary path, please check the path you've inputted.",
-                    ["Get Terraform", "Ignore"],
-                    (reply) => {
-                        switch (reply.actionIdx) {
-                            case 0:
-                                nova.openURL("https://developer.hashicorp.com/terraform/downloads")
-                                break
-                            case 1:
-                                break
-                        }
-                    }
-                )
-            } else {
-                this.path = path
+    nova.config.onDidChange("terraform-nova.terraform-path", (path) => {
+      if (!nova.fs.access(path, nova.fs.constants.F_OK)) {
+        this.dispose();
+        notify(
+          "Invalid Terraform binary path, please check the path you've inputted.",
+          ["Get Terraform", "Ignore"],
+          (reply) => {
+            switch (reply.actionIdx) {
+              case 0:
+                nova.openURL("https://developer.hashicorp.com/terraform/downloads")
+                break
+              case 1:
+                break
             }
-        })
-    }
+          }
+        )
+      } else {
+        this.path = path
+      }
+    })
+  }
 
-    provideTasks() {
-        if (!this.path) {
-            notify(
-                "Cannot find Terraform binary, please ensure it is installed.",
-                ["Get Help", "Ignore"],
-                (reply) => {
-                    switch (reply.actionIdx) {
-                        case 0:
-                            nova.openURL("https://developer.hashicorp.com/terraform/downloads")
-                            break
-                        case 1:
-                            break
-                    }
-                }
-            )
-            return []
+  provideTasks() {
+    if (!this.path) {
+      notify(
+        "Cannot find Terraform binary, please ensure it is installed.",
+        ["Get Help", "Ignore"],
+        (reply) => {
+          switch (reply.actionIdx) {
+            case 0:
+              nova.openURL("https://developer.hashicorp.com/terraform/downloads")
+              break
+            case 1:
+              break
+          }
         }
-
-        const terraformTask = new Task("Terraform")
-
-        terraformTask.setAction(
-            Task.Build,
-            new TaskProcessAction(this.path, {
-                args: ["plan"],
-                env: {},
-                cwd: nova.workspace.path,
-            })
-        )
-
-        terraformTask.setAction(
-            Task.Run,
-            new TaskProcessAction(this.path, {
-                args: ["apply", "-auto-approve"],
-                env: {},
-                cwd: nova.workspace.path,
-            })
-        )
-
-        terraformTask.setAction(
-            Task.Clean,
-            new TaskProcessAction(this.path, {
-                args: ["destroy", "-auto-approve"],
-                env: {},
-                cwd: nova.workspace.path,
-            })
-        )
-
-
-        return [terraformTask]
+      )
+      return []
     }
+
+    const terraformTask = new Task("Terraform")
+
+    terraformTask.setAction(
+      Task.Build,
+      new TaskProcessAction(this.path, {
+        args: ["plan"],
+        env: {},
+        cwd: nova.workspace.path,
+      })
+    )
+
+    terraformTask.setAction(
+      Task.Run,
+      new TaskProcessAction(this.path, {
+        args: ["apply", "-auto-approve"],
+        env: {},
+        cwd: nova.workspace.path,
+      })
+    )
+
+    terraformTask.setAction(
+      Task.Clean,
+      new TaskProcessAction(this.path, {
+        args: ["destroy", "-auto-approve"],
+        env: {},
+        cwd: nova.workspace.path,
+      })
+    )
+
+
+    return [terraformTask]
+  }
 }
 
 class TerraformLanguageServer {
-    constructor() {
-        this.languageClient = null;
-        this.restartToken = null;
-        this.watcher = null;
+  constructor() {
+    this.languageClient = null;
+    this.restartToken = null;
 
-        nova.config.onDidChange("terraform-nova.language-server-path", (_path) => {
-            this.start();
-        }, this)
+    nova.config.onDidChange("terraform-nova.language-server-path", (_path) => {
+      this.start();
+    }, this)
 
-        this.start();
+    this.start();
 
-        nova.workspace.onDidChangePath((_path) => {
-            this.startWatcher();
-        }, this);
+    languageServer = this;
+  }
 
-        languageServer = this;
+  deactivate() {
+    this.stop();
 
-        this.startWatcher();
+    if (this.restartToken) {
+      clearTimeout(this.restartToken)
+    }
+  }
+
+  start() {
+    console.log("Starting client")
+
+    this.stop();
+
+    let path = nova.config.get("terraform-nova.language-server-path");
+    let args = ["serve"];
+
+    if (!path) {
+      path = "/opt/homebrew/bin/terraform-ls"
     }
 
-    deactivate() {
-        this.stop();
+    let serverOptions = {
+      path: path,
+      args: args,
+    };
 
-        if (this.watcher) {
-            this.watcher.dispose()
-            this.watcher = null;
-        }
+    let clientOptions = {
+      syntaxes: [
+        "terraform",
+        "terraform-vars"
+      ],
+      initializationOptions: {
+        terraform: {
+          //TODO: Refactor to have a shared source of configuration
+          path: nova.config.get("terraform-nova.terraform-path"),
+        },
+        indexing: {
+          ignoreDirectoryNames: [
+            ".nova"
+          ]
+        },
+      }
+    };
 
-        if (this.restartToken) {
-            clearTimeout(this.restartToken)
-        }
-    }
+    let client = new LanguageClient("terraform-ls", "Terraform Language Server", serverOptions, clientOptions);
 
-    startWatcher() {
-        if (this.watcher) {
-            this.watcher.dispose()
-            this.watcher = null;
-        }
+    nova.commands.register("terraform-nova.format", (editor) => {
+      formatFile(editor, client)
+    })
 
-        let workspacePath = nova.workspace.path;
-        if (workspacePath) {
-            this.watcher = nova.fs.watch("compile_commands.json", (path) => {
-                languageServer.fileDidChange(path);
-            });
-        }
-    }
+    nova.workspace.onDidAddTextEditor((editor) => {
+      return editor.onWillSave((editor) => formatFile(editor, client))
+    })
 
-    start() {
-        console.log("Starting client")
-
-        this.stop();
-
-        let path = nova.config.get("terraform-nova.language-server-path");
-        let args = ["serve"];
-
-        if (!path) {
-            path = "/opt/homebrew/bin/terraform-ls"
-        }
-
-        let serverOptions = {
-            path: path,
-            args: args,
-        };
-
-        let clientOptions = {
-            syntaxes: [
-                "terraform",
-                "terraform-vars"
-            ],
-            initializationOptions: {
-                terraform: {
-                    //TODO: Refactor to have a shared source of configuration
-                    path: nova.config.get("terraform-nova.terraform-path"),
-
-                },
-                indexing: {
-                    ignoreDirectoryNames: [
-                        ".nova"
-                    ]
-                }
+    client.onDidStop((error) => {
+      if (error) {
+        notify(
+          `Terraform language server quit unexpectedly with error: ${error}`,
+          ["Restart", "Ignore"],
+          (reply) => {
+            if (reply.actionIdx == 0) {
+              languageServer.start();
             }
-        };
+          }
+        )
+      }
+    }, this);
 
-        let client = new LanguageClient("terraform-ls", "Terraform Language Server", serverOptions, clientOptions);
+    try {
+      client.start();
 
-        client.onDidStop((error) => {
-            if (error) {
-                notify(
-                    `Terraform language server quit unexpectedly with error: ${error}`,
-                    ["Restart", "Ignore"],
-                    (reply) => {
-                        if (reply.actionIdx == 0) {
-                            languageServer.start();
-                        }
-                    }
-                )
-            }
-        }, this);
+      nova.subscriptions.add(client);
+      this.languageClient = client;
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
-        try {
-            client.start();
+  stop() {
+    let langclient = this.languageClient;
+    this.languageClient = null;
 
-            nova.subscriptions.add(client);
-            this.languageClient = client;
-        } catch (err) {
-            console.error(err);
-        }
+    if (langclient) {
+      langclient.stop();
+      nova.subscriptions.remove(langclient);
+    }
+  }
+
+  scheduleRestart() {
+    let token = this.restartToken;
+    if (token != null) {
+      clearTimeout(token);
     }
 
-    stop() {
-        let langclient = this.languageClient;
-        this.languageClient = null;
-
-        if (langclient) {
-            langclient.stop();
-            nova.subscriptions.remove(langclient);
-        }
-    }
-
-    fileDidChange(path) {
-        let lastPathComponent = nova.path.basename(path);
-        if (lastPathComponent == "compile_commands.json" || lastPathComponent == "compile_flags.txt") {
-            this.scheduleRestart()
-        }
-    }
-
-    scheduleRestart() {
-        let token = this.restartToken;
-        if (token != null) {
-            clearTimeout(token);
-        }
-
-        let languageServer = this;
-        this.restartToken = setTimeout(() => {
-            languageServer.start();
-        }, 1000);
-    }
+    let languageServer = this;
+    this.restartToken = setTimeout(() => {
+      languageServer.start();
+    }, 1000);
+  }
 }
 
 function notify(body, actions, handler) {
-    let request = new NotificationRequest("terraform")
+  let request = new NotificationRequest("terraform")
 
-    request.title = "Terraform"
-    request.body = body
-    if (actions) request.actions = actions
+  request.title = "Terraform"
+  request.body = body
+  if (actions) request.actions = actions
 
-    nova.notifications.add(request).then(reply => {
-        if (handler) handler(reply)
-    }, err => console.error(err))
+  nova.notifications.add(request).then(reply => {
+    if (handler) handler(reply)
+  }, err => console.error(err))
+}
+
+nova.commands.register("terraform-nova.restartLSP", () => languageServer.scheduleRestart())
+nova.commands.register("terraform-nova.stopLSP", () => languageServer.stop())
+
+async function formatFile(editor, lspClient) {
+  var cmdArgs = {
+    textDocument: {
+      uri: editor.document.uri,
+    },
+    options: {
+      tabSize: editor.tabLength,
+      insertSpaces: editor.softTabs,
+    },
+  };
+
+  const changes = await lspClient.sendRequest("textDocument/formatting", cmdArgs);
+
+  if (!changes) {
+    console.warn("no changes")
+    return
+  }
+
+  await Edits.applyEdits(editor, changes)
 }

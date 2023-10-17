@@ -1,3 +1,13 @@
+## Version 0.6.0
+
+### ✨ New
+- **Formatting:** Enabled ability to format on save
+
+### 💎 Improved
+- **Autocomplete:** Faster autocomplete response times
+- **Autocomplete:** Better support for modules
+
+
 ## Version 0.5.1
 
 ### 🐞 Fixed

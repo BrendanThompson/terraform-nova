@@ -6,7 +6,7 @@
     "repository": "https://github.com/BrendanThompson/terraform-nova",
     "bugs": "https://github.com/BrendanThompson/terraform-nova/issues",
     "homepage": "https://brendanthompson.com",
-    "version": "0.5.1",
+    "version": "0.6.0",
     "categories": ["languages", "tasks", "formatters", "clips"],
     "keywords": ["terraform", "hashicorp", "hcl"],
     "main": "main.js",
@@ -32,5 +32,24 @@
             "type": "path",
             "default": "/opt/homebrew/bin/terraform"
         }
-    ]
+    ],
+    "commands": {
+        "extensions": [{
+                "title": "Restart Terraform Language Server",
+                "command": "terraform-nova.restartLSP"
+            },
+            {
+                "title": "Stop Terraform Language Server",
+                "command": "terraform-nova.stopLSP"
+            }
+        ],
+        "editor": [{
+            "title": "Format Document",
+            "command": "terraform-nova.format",
+            "when": "editorHasFocus",
+            "filters": {
+                "syntaxes": ["terraform"]
+            }
+        }]
+    }
 }
