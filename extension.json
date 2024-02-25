@@ -6,7 +6,7 @@
     "repository": "https://github.com/BrendanThompson/terraform-nova",
     "bugs": "https://github.com/BrendanThompson/terraform-nova/issues",
     "homepage": "https://brendanthompson.com",
-    "version": "0.6.1",
+    "version": "0.6.2",
     "categories": ["languages", "tasks", "formatters", "clips"],
     "keywords": ["terraform", "hashicorp", "hcl"],
     "main": "main.js",

@@ -1,3 +1,8 @@
+## Version 0.6.2
+
+### 🐞 Fixed
+- **Syntax Highlighting:** Support string interpolation within a `heredoc`
+
 ## Version 0.6.1
 
 ### 🐞 Fixed
