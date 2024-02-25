@@ -1,3 +1,8 @@
+## Version 0.6.1
+
+### 🐞 Fixed
+- **Syntax Highlighting:** `heredoc` renders correctly when an it is an element of an `array`
+
 ## Version 0.6.0
 
 ### ✨ New
