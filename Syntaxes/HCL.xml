@@ -747,6 +747,9 @@
 					<template>\2</template>
 					<capture number="0" name="hcl.operator.heredoc.end" />
 				</ends-with>
+				<subscopes>
+					<include syntax="self" collection="interpolations" />
+				</subscopes>
 			</scope>
 			<scope name="hcl.block.heredoc.generic.indented">
 				<starts-with>
@@ -760,6 +763,9 @@
 					<template>\2</template>
 					<capture number="0" name="hcl.operator.heredoc.end" />
 				</ends-with>
+				<subscopes>
+					<include syntax="self" collection="interpolations" />
+				</subscopes>
 			</scope>
 		</collection>
 		<collection name="expressions">
