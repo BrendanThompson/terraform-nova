@@ -11,8 +11,10 @@
     "keywords": ["terraform", "hashicorp", "hcl"],
     "main": "main.js",
     "activationEvents": [
+        "onLanguage:HCL",
         "onLanguage:Terraform",
         "onLanguage:Terraform Variables",
+        "onWorkspaceContains:*.hcl",
         "onWorkspaceContains:*.tf",
         "onWorkspaceContains:*.tfvars"
     ],
