@@ -586,6 +586,7 @@
 					<capture number="0" name="hcl.bracket.square.close" />
 				</ends-with>
 				<subscopes>
+					<include syntax="self" collection="heredoc" />
 					<include syntax="self" collection="comments" />
 					<include syntax="self" collection="strings" />
 					<include syntax="self" collection="functions" />
