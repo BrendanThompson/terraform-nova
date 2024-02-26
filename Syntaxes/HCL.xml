@@ -62,9 +62,9 @@
 	</scopes>
 
 	<!-- What does this even do? -->
-	<symbols redefinition="within-construct">
+	<!-- <symbols redefinition="within-construct">
 		<local scope="within-construct" />
-	</symbols>
+	</symbols> -->
 
 	<collections>
 		<collection name="comments">
@@ -170,8 +170,11 @@
 		<collection name="blocks">
 		<!-- top-level variable and output blocks -->
 			<scope name="hcl.block.variable">
-				<symbol type="block">
+				<symbol type="variable">
 					<context behavior="subtree" fold-type="function" />
+					<display-name>
+						<component selector="name" replace="&quot;" replace-with="" />
+					</display-name>
 				</symbol>
 				<starts-with>
 					<expression>(variable)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
@@ -195,8 +198,11 @@
 				</subscopes>
 			</scope>
 			<scope name="hcl.block.locals">
-				<symbol type="block">
+				<symbol type="constant">
 					<context behavior="subtree" fold-type="function" />
+					<display-name>
+						<component selector="name" replace="&quot;" replace-with="" />
+					</display-name>
 				</symbol>
 				<starts-with>
 					<expression>(locals)\s+(\{)</expression>

@@ -122,30 +122,29 @@
 		</collection>
 
 		<collection name="blocks">
-		<!-- top-level resource -->
-		<scope name="terraform.block.global">
-			<symbol>
-				<context behavior="subtree" fold-type="function" />
-			</symbol>
-			<starts-with>
-				<expression>(terraform)\s+(\{)</expression>
-				<capture number="1" name="terraform.keyword" />
-				<capture number="2" name="hcl.bracket.curly.open" />
-			</starts-with>
-			<ends-with>
-				<expression>(\})</expression>
-				<capture number="1" name="hcl.bracket.curly.close" />
-			</ends-with>
-			<subscopes>
-				<include syntax="hcl" collection="comments" />
-				<include syntax="hcl" collection="strings" />
-				<include syntax="hcl" collection="numbers" />
-				<include syntax="hcl" collection="values" />
-				<include syntax="hcl" collection="assignments" />
-				<include syntax="hcl" collection="inner-blocks" />
-			</subscopes>
-		</scope>
-			<scope name="terraform.resource.definition.type">
+			<scope name="terraform.block.global">
+				<symbol>
+					<context behavior="subtree" fold-type="function" />
+				</symbol>
+				<starts-with>
+					<expression>(terraform)\s+(\{)</expression>
+					<capture number="1" name="terraform.keyword" />
+					<capture number="2" name="hcl.bracket.curly.open" />
+				</starts-with>
+				<ends-with>
+					<expression>(\})</expression>
+					<capture number="1" name="hcl.bracket.curly.close" />
+				</ends-with>
+				<subscopes>
+					<include syntax="hcl" collection="comments" />
+					<include syntax="hcl" collection="strings" />
+					<include syntax="hcl" collection="numbers" />
+					<include syntax="hcl" collection="values" />
+					<include syntax="hcl" collection="assignments" />
+					<include syntax="hcl" collection="inner-blocks" />
+				</subscopes>
+			</scope>
+			<scope name="terraform.block.resource">
 				<symbol type="constructor">"
 					<context behavior="subtree" fold-type="function" />
 					<display-name>
@@ -154,7 +153,7 @@
 					</display-name>
 				</symbol>
 				<starts-with>
-					<expression>(resource|data)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+("[a-zA-Z_][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+					<expression>(resource)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+("[a-zA-Z_][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
 					<capture number="1" name="terraform.keyword" />
 					<capture number="2" name="terraform.identifier.type" />
 					<capture number="3" name="terraform.resource.identifier.type.name" />
@@ -177,8 +176,39 @@
 					<include syntax="hcl" collection="inner-blocks" />
 				</subscopes>
 			</scope>
-		<!-- Output block -->
-			<scope name="terraform.output.definition.type">
+			<scope name="terraform.block.data">
+				<symbol type="constructor">"
+					<context behavior="subtree" fold-type="function" />
+					<display-name>
+						<component selector="identifier.type" append="." replace="&quot;" replace-with="" />
+						<component variable="name" replace="&quot;" replace-with="" />
+					</display-name>
+				</symbol>
+				<starts-with>
+					<expression>(data)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+("[a-zA-Z_][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+					<capture number="1" name="terraform.keyword.data" />
+					<capture number="2" name="terraform.identifier.type" />
+					<capture number="3" name="terraform.resource.identifier.type.name" />
+					<capture number="4" name="hcl.bracket.curly.open" />
+				</starts-with>
+				<ends-with>
+					<expression>(\})</expression>
+					<capture number="1" name="hcl.bracket.curly.close" />
+				</ends-with>
+				<subscopes>
+					<include syntax="hcl" collection="types" />
+					<include syntax="hcl" collection="comments" />
+					<include syntax="hcl" collection="strings" />
+					<include syntax="hcl" collection="numbers" />
+					<include syntax="hcl" collection="values" />
+					<include syntax="hcl" collection="assignments" />
+					<include syntax="hcl" collection="functions" />
+					<include syntax="hcl" collection="objects" />
+					<include syntax="hcl" collection="heredoc" />
+					<include syntax="hcl" collection="inner-blocks" />
+				</subscopes>
+			</scope>
+			<scope name="terraform.block.output">
 				<symbol type="constructor">
 					<context behavior="subtree" fold-type="function" />
 					<display-name>
@@ -187,7 +217,38 @@
 					</display-name>
 				</symbol>
 				<starts-with>
-					<expression>(output|module)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+					<expression>(output)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+					<capture number="1" name="hcl.keyword" />
+					<capture number="2" name="hcl.output.identifier.type.name" />
+					<capture number="3" name="hcl.bracket.curly.open" />
+				</starts-with>
+				<ends-with>
+					<expression>(\})</expression>
+					<capture number="1" name="hcl.bracket.curly.close" />
+				</ends-with>
+				<subscopes>
+					<include syntax="hcl" collection="types" />
+					<include syntax="hcl" collection="strings" />
+					<include syntax="hcl" collection="inner-blocks" />
+					<include syntax="hcl" collection="numbers" />
+					<include syntax="hcl" collection="values" />
+					<include syntax="hcl" collection="assignments" />
+					<include syntax="hcl" collection="functions" />
+
+					<include syntax="hcl" collection="objects" />
+					<include syntax="hcl" collection="comments" />
+				</subscopes>
+			</scope>
+			<scope name="terraform.block.module">
+				<symbol type="static-method">
+					<context behavior="subtree" fold-type="function" />
+					<display-name>
+						<component selector="keyword" append="." replace="&quot;" replace-with="" />
+						<component variable="name" replace="&quot;" replace-with=""/>
+					</display-name>
+				</symbol>
+				<starts-with>
+					<expression>(module)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
 					<capture number="1" name="hcl.keyword" />
 					<capture number="2" name="hcl.output.identifier.type.name" />
 					<capture number="3" name="hcl.bracket.curly.open" />
@@ -232,6 +293,68 @@
 					<include syntax="hcl" collection="types" />
 					<include syntax="self" collection="syntax" />
 					<include syntax="hcl" collection="inner-blocks" />
+				</subscopes>
+			</scope>
+			<scope name="terraform.block.import">
+				<symbol type="block">
+					<context behavior="subtree" fold-type="function"/>
+				</symbol>
+				<starts-with>
+					<expression>(import)\s+(\{)</expression>
+					<capture number="1" name="hcl.keyword"/>
+					<capture number="2" name="hcl.bracket.curly.open"/>
+				</starts-with>
+				<ends-with>
+				<expression>(\})</expression>
+					<capture number="1" name="hcl.bracket.curly.close" />
+				</ends-with>
+				<subscopes>
+					<include syntax="hcl" collection="comments" />
+					<include syntax="hcl" collection="assignments" />
+				</subscopes>
+			</scope>
+			<scope name="terraform.block.assert">
+				<symbol type="block">
+					<context behavior="subtree" fold-type="function"/>
+				</symbol>
+				<starts-with>
+					<expression>(assert)\s+(\{)</expression>
+					<capture number="1" name="hcl.keyword"/>
+					<capture number="2" name="hcl.bracket.curly.open"/>
+				</starts-with>
+				<ends-with>
+				<expression>(\})</expression>
+					<capture number="1" name="hcl.bracket.curly.close" />
+				</ends-with>
+				<subscopes>
+					<include syntax="hcl" collection="comments" />
+					<include syntax="hcl" collection="strings" />
+					<include syntax="hcl" collection="numbers" />
+					<include syntax="hcl" collection="values" />
+					<include syntax="hcl" collection="assignments" />
+					<include syntax="hcl" collection="types" />
+					<include syntax="self" collection="syntax" />
+					<include syntax="hcl" collection="inner-blocks" />
+				</subscopes>
+			</scope>
+			<scope name="terraform.block.check">
+				<symbol type="block">
+					<context behavior="subtree" fold-type="function" />
+				</symbol>
+				<starts-with>
+					<expression>(check)\s+("[a-zA-Z][a-zA-Z0-9\_\-\./]*")\s+(\{)</expression>
+					<capture number="1" name="terraform.keyword.check" />
+					<capture number="2" name="hcl.identifier.type.name" />
+					<capture number="3" name="hcl.bracket.curly.open" />
+				</starts-with>
+				<ends-with>
+					<expression>(\})</expression>
+					<capture number="1" name="hcl.bracket.curly.close" />
+				</ends-with>
+				<subscopes anchored="true">
+					<include syntax="self" collection="terraform.block.data" />
+					<include syntax="self" collection="terraform.block.assert" />
+					<include syntax="hcl" collection="heredoc" optional="true"/>
 				</subscopes>
 			</scope>
 		</collection>
