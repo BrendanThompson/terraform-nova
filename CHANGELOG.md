@@ -1,3 +1,11 @@
+## Version 0.6.3
+
+### ✨ New
+- **Syntax Highlighting:** Add support for `moved` block
+
+### 💎 Improved
+- **Syntax Highlighting:** Support `data` blocks as symbols
+
 ## Version 0.6.2
 
 ### 🐞 Fixed
