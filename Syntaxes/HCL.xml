@@ -36,7 +36,7 @@
 		</multiline>
 	</comments>
 
-	<brackets>
+<brackets>
 		<pair open="{" close="}" />
 		<pair open="[" close="]" />
 		<pair open="(" close=")" />
@@ -123,22 +123,22 @@
 						\b          # Be either the beginning of the line, require whitespace
 						 -?         # an optional minus
 						 (?:
-						   0        # a zero
-						   |        # ...or...
-						   [1-9]    # a 1-9 character
-						   \d*      # followed by zero or more digits
+							 0        # a zero
+							 |        # ...or...
+							 [1-9]    # a 1-9 character
+							 \d*      # followed by zero or more digits
 						 )
 						 (?:
-						   (?:
+							 (?:
 							 \.     # a period
 							 \d+    # followed by one or more digits
-						   )?
+							 )?
 						 )?         # make decimal portion optional
-				   (
+					 (
 					 [kKmMgG]b? # Do we have a trailing suffix?
-				   )?         #
-				   \b
-					   )
+					 )?         #
+					 \b
+						 )
 				</expression>
 			</scope>
 		</collection>
