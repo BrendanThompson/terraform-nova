@@ -38,6 +38,7 @@
 		</multiline>
 	</comments>
 
+
 	<brackets>
 		<pair open="{" close="}" />
 		<pair open="[" close="]" />
@@ -177,10 +178,11 @@
 				</subscopes>
 			</scope>
 			<scope name="terraform.block.data">
-				<symbol type="constructor">"
+			<!-- This should really be `reference` however it doesn't show in the symbol list -->
+				<symbol type="getter">
 					<context behavior="subtree" fold-type="function" />
 					<display-name>
-						<component selector="identifier.type" append="." replace="&quot;" replace-with="" />
+						<component selector="identifier.type" prepend="data." append="." replace="&quot;" replace-with="" />
 						<component variable="name" replace="&quot;" replace-with="" />
 					</display-name>
 				</symbol>
@@ -313,6 +315,27 @@
 					<include syntax="hcl" collection="assignments" />
 				</subscopes>
 			</scope>
+			<scope name="terraform.block.moved">
+				<symbol type="static-property">
+					<context behavior="subtree" fold-type="function" />
+					<display-name>
+						<component selector="keyword" replace="\s\{" replace-with=""/>
+					</display-name>
+				</symbol>
+				<starts-with>
+					<expression>(moved)\s+(\{)</expression>
+					<capture number="1" name="hcl.keyword"/>
+					<capture number="2" name="hcl.bracket.curly.open"/>
+				</starts-with>
+				<ends-with>
+				<expression>(\})</expression>
+					<capture number="1" name="hcl.bracket.curly.close" />
+				</ends-with>
+				<subscopes>
+					<include syntax="hcl" collection="comments" />
+					<include syntax="hcl" collection="assignments" />
+				</subscopes>
+			</scope>
 			<scope name="terraform.block.assert">
 				<symbol type="block">
 					<context behavior="subtree" fold-type="function"/>
@@ -390,4 +413,5 @@
 			</scope>
 		</collection>
 	</collections>
+
 </syntax>
